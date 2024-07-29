@@ -28,7 +28,7 @@ public class CsvReaderUtil {
                         options.add(br.readLine());
                     }
                     String answerLine = br.readLine();
-                    int answer = Integer.parseInt(answerLine.split(":")[1].trim()) - 1;
+                    int answer = Integer.parseInt(answerLine.split(":")[1]) - 1;
 
                     Question question = new Question();
                     question.setId(id++);
