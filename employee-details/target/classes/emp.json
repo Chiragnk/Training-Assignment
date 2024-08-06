@@ -1,0 +1,23 @@
+[
+    {"empno": 1, "salary": 75000.00, "job": "Manager", "currency": "USD"},
+    {"empno": 2, "salary": 60000.50, "job": "Developer", "currency": "USD"},
+    {"empno": 3, "salary": 45000.75, "job": "Tester", "currency": "USD"},
+    {"empno": 4, "salary": 52000.00, "job": "Designer", "currency": "EUR"},
+    {"empno": 5, "salary": 48000.25, "job": "Analyst", "currency": "EUR"},
+    {"empno": 6, "salary": 70000.60, "job": "Consultant", "currency": "GBP"},
+    {"empno": 7, "salary": 67000.80, "job": "Engineer", "currency": "GBP"},
+    {"empno": 8, "salary": 50000.00, "job": "Administrator", "currency": "JPY"},
+    {"empno": 9, "salary": 55000.00, "job": "Coordinator", "currency": "JPY"},
+    {"empno": 10, "salary": 62000.45, "job": "Support", "currency": "AUD"},
+    {"empno": 11, "salary": 58000.20, "job": "Supervisor", "currency": "AUD"},
+    {"empno": 12, "salary": 72000.30, "job": "Executive", "currency": "CAD"},
+    {"empno": 13, "salary": 68000.75, "job": "Assistant", "currency": "CAD"},
+    {"empno": 14, "salary": 54000.50, "job": "Specialist", "currency": "INR"},
+    {"empno": 15, "salary": 50000.00, "job": "Operator", "currency": "INR"},
+    {"empno": 16, "salary": 49000.95, "job": "Technician", "currency": "CNY"},
+    {"empno": 17, "salary": 53000.25, "job": "Planner", "currency": "CNY"},
+    {"empno": 18, "salary": 76000.65, "job": "Architect", "currency": "CHF"},
+    {"empno": 19, "salary": 69000.40, "job": "Scientist", "currency": "CHF"},
+    {"empno": 20, "salary": 58000.00, "job": "Agent", "currency": "SGD"}
+  ]
+  

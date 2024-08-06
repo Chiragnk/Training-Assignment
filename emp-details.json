@@ -1,0 +1,121 @@
+[ {
+  "empno" : 1,
+  "salary" : 75000.0,
+  "job" : "Manager",
+  "currency" : "USD",
+  "salaryString" : "75000.00 $"
+}, {
+  "empno" : 2,
+  "salary" : 60000.5,
+  "job" : "Developer",
+  "currency" : "USD",
+  "salaryString" : "60000.50 $"
+}, {
+  "empno" : 3,
+  "salary" : 45000.75,
+  "job" : "Tester",
+  "currency" : "USD",
+  "salaryString" : "45000.75 $"
+}, {
+  "empno" : 4,
+  "salary" : 52000.0,
+  "job" : "Designer",
+  "currency" : "EUR",
+  "salaryString" : "52000.00 €"
+}, {
+  "empno" : 5,
+  "salary" : 48000.25,
+  "job" : "Analyst",
+  "currency" : "EUR",
+  "salaryString" : "48000.25 €"
+}, {
+  "empno" : 6,
+  "salary" : 70000.6,
+  "job" : "Consultant",
+  "currency" : "GBP",
+  "salaryString" : "70000.60 £"
+}, {
+  "empno" : 7,
+  "salary" : 67000.8,
+  "job" : "Engineer",
+  "currency" : "GBP",
+  "salaryString" : "67000.80 £"
+}, {
+  "empno" : 8,
+  "salary" : 50000.0,
+  "job" : "Administrator",
+  "currency" : "JPY",
+  "salaryString" : "50000 ¥"
+}, {
+  "empno" : 9,
+  "salary" : 55000.0,
+  "job" : "Coordinator",
+  "currency" : "JPY",
+  "salaryString" : "55000 ¥"
+}, {
+  "empno" : 10,
+  "salary" : 62000.45,
+  "job" : "Support",
+  "currency" : "AUD",
+  "salaryString" : "62000.45 A$"
+}, {
+  "empno" : 11,
+  "salary" : 58000.2,
+  "job" : "Supervisor",
+  "currency" : "AUD",
+  "salaryString" : "58000.20 A$"
+}, {
+  "empno" : 12,
+  "salary" : 72000.3,
+  "job" : "Executive",
+  "currency" : "CAD",
+  "salaryString" : "72000.30 C$"
+}, {
+  "empno" : 13,
+  "salary" : 68000.75,
+  "job" : "Assistant",
+  "currency" : "CAD",
+  "salaryString" : "68000.75 C$"
+}, {
+  "empno" : 14,
+  "salary" : 54000.5,
+  "job" : "Specialist",
+  "currency" : "INR",
+  "salaryString" : "54000.50 ₹"
+}, {
+  "empno" : 15,
+  "salary" : 50000.0,
+  "job" : "Operator",
+  "currency" : "INR",
+  "salaryString" : "50000.00 ₹"
+}, {
+  "empno" : 16,
+  "salary" : 49000.95,
+  "job" : "Technician",
+  "currency" : "CNY",
+  "salaryString" : "49000.95 ¥"
+}, {
+  "empno" : 17,
+  "salary" : 53000.25,
+  "job" : "Planner",
+  "currency" : "CNY",
+  "salaryString" : "53000.25 ¥"
+}, {
+  "empno" : 18,
+  "salary" : 76000.65,
+  "job" : "Architect",
+  "currency" : "CHF",
+  "salaryString" : "76000.65 CHF"
+}, {
+  "empno" : 19,
+  "salary" : 69000.4,
+  "job" : "Scientist",
+  "currency" : "CHF",
+  "salaryString" : "69000.40 CHF"
+}, {
+  "empno" : 20,
+  "salary" : 58000.0,
+  "job" : "Agent",
+  "currency" : "SGD",
+  "salaryString" : "58000.00 S$"
+} ]
