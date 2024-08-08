@@ -14,6 +14,8 @@
         <module>ipl-stats</module>
         <module>student-data</module>
         <module>employee-details</module>
+        <module>jdbc</module>
+        <module>ipl-jdbc</module>
     </modules>
 
     <properties>

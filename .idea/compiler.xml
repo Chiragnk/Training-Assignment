@@ -11,7 +11,11 @@
         <module name="student-data" />
         <module name="employee-details" />
         <module name="mtz-quiz" />
+        <module name="ipl-jdbc" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="jdbc" target="17" />
+    </bytecodeTargetLevel>
   </component>
 </project>
