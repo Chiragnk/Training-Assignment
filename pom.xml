@@ -14,8 +14,10 @@
         <module>ipl-stats</module>
         <module>student-data</module>
         <module>employee-details</module>
-        <module>jdbc</module>
         <module>ipl-jdbc</module>
+        <module>contact-book-app</module>
+        <module>pdf-generation</module>
+        <module>invoice-generation</module>
     </modules>
 
     <properties>

@@ -78,7 +78,6 @@ public class Main {
                 amount.getRole(),
                 amount.getAmount()));
 
-        // Get max paid players by role
         Map<String, List<PlayerDTO>> maxPaidPlayersByRole = teamService.getMaxPaidPlayersByRole();
         System.out.println("Max Paid Players by Role:");
         maxPaidPlayersByRole.forEach((roleName, players) -> {
@@ -88,7 +87,6 @@ public class Main {
                     player.getAmount()));
         });
 
-        // Get players sorted by field
         System.out.print("Enter the field name to sort players by: ");
         String fieldName = scanner.nextLine();
         List<PlayerDTO> sortedPlayers = teamService.getPlayersBySort(fieldName);
