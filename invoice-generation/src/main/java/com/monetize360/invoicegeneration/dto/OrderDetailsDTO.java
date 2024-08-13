@@ -21,12 +21,7 @@ public class OrderDetailsDTO {
         this.price = price;
         this.quantity = quantity;
         this.taxRate = taxRate;
-        calculateAmounts();
     }
 
-    public void calculateAmounts() {
-        this.amount = price * quantity;
-        this.totalAmount = amount + (amount * taxRate / 100);
-    }
 
 }

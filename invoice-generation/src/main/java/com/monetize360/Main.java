@@ -10,6 +10,7 @@ import com.monetize360.invoicegeneration.dto.DessertDTO;
 import com.monetize360.invoicegeneration.dto.DrinkDTO;
 import com.monetize360.invoicegeneration.dto.MenuDTO;
 import com.monetize360.invoicegeneration.dto.OrderDetailsDTO;
+import com.monetize360.invoicegeneration.service.OrderDetailsService;
 import com.monetize360.invoicegeneration.service.PdfGenerationService;
 import org.apache.fop.apps.FOPException;
 
@@ -27,6 +28,8 @@ public class Main {
         File jsonFile = new File(resourcesPath, "menu.json");
         ObjectMapper objectMapper = new ObjectMapper();
         XmlMapper xmlMapper = new XmlMapper();
+
+        OrderDetailsService orderDetailsService = new OrderDetailsService();
 
         try {
             JsonNode rootNode = objectMapper.readTree(jsonFile);
@@ -50,20 +53,21 @@ public class Main {
                     break;
                 }
 
-                OrderDetailsDTO orderDetails = findItem(menuDTO, dishName, 5);
+                OrderDetailsDTO orderDetails = findItem(menuDTO, dishName);
 
                 if (orderDetails != null) {
                     boolean itemExists = false;
                     for (OrderDetailsDTO item : selectedItems) {
                         if (item.getName().equalsIgnoreCase(orderDetails.getName())) {
                             item.setQuantity(item.getQuantity() + 1);
-                            item.setTotalAmount(item.getPrice() * item.getQuantity() * (1 + 0.05)); // Assuming a fixed 5% tax
+                            orderDetailsService.calculateAmounts(item);
                             itemExists = true;
                             break;
                         }
                     }
 
                     if (!itemExists) {
+                        orderDetailsService.calculateAmounts(orderDetails);
                         selectedItems.add(orderDetails);
                     }
 
@@ -115,7 +119,7 @@ public class Main {
             String name = node.path("name").asText();
             double price = node.path("price").asDouble();
             int quantity = node.path("quantity").asInt(1);
-            drinks.add(new Drink(name, price,quantity));
+            drinks.add(new Drink(name, price, quantity));
         }
 
         Menu menu = new Menu();
@@ -123,7 +127,6 @@ public class Main {
         menu.setDrinks(drinks);
         return menu;
     }
-
 
     private static MenuDTO convertToMenuDTO(Menu menu) {
         List<DessertDTO> dessertDTOs = menu.getDesserts().stream()
@@ -149,16 +152,16 @@ public class Main {
         }
     }
 
-    private static OrderDetailsDTO findItem(MenuDTO menuDTO, String dishName, double taxRate) {
+    private static OrderDetailsDTO findItem(MenuDTO menuDTO, String dishName) {
         for (DessertDTO dessert : menuDTO.getDesserts()) {
             if (dessert.getName().equalsIgnoreCase(dishName)) {
-                return new OrderDetailsDTO(dessert.getName(), dessert.getPrice(), 1, dessert.getPrice() * (1 + taxRate / 100));
+                return new OrderDetailsDTO(dessert.getName(), dessert.getPrice(), 1, 5);
             }
         }
 
         for (DrinkDTO drink : menuDTO.getDrinks()) {
             if (drink.getName().equalsIgnoreCase(dishName)) {
-                return new OrderDetailsDTO(drink.getName(), drink.getPrice(), 1, drink.getPrice() * (1 + taxRate / 100));
+                return new OrderDetailsDTO(drink.getName(), drink.getPrice(), 1, 5);
             }
         }
 
