@@ -9,10 +9,10 @@ import java.util.List;
 
 public interface ContactService {
     ContactDTO createContact(ContactDTO contact) throws SQLException;
-    boolean updateContact(ContactDTO contact);
-    boolean deleteContact(int contactId);
-    ContactDTO getContactById(int contactId);
-    List<ContactDTO> searchContacts(String keyword);
+    boolean updateContact(ContactDTO contact) throws SQLException;
+    boolean deleteContact(int contactId) throws SQLException;
+    ContactDTO getContactById(int contactId) throws SQLException;
+    List<ContactDTO> searchContacts(String keyword) throws SQLException;
     boolean importContactsFromExcel(InputStream inputStream);
     boolean exportContactsToExcel(OutputStream outputStream) throws SQLException;
 }

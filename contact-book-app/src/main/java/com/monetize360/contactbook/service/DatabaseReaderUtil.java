@@ -20,7 +20,7 @@ import java.util.Properties;
         private static final String URL = properties.getProperty("db.url");
         private static final String USER = properties.getProperty("db.user");
         private static final String PASSWORD = properties.getProperty("db.password");
-        static Connection getConnection() throws SQLException {
+        public static Connection getConnection() throws SQLException {
             return DriverManager.getConnection(URL, USER, PASSWORD);
         }
     }

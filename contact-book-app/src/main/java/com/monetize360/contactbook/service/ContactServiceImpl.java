@@ -1,8 +1,11 @@
 package com.monetize360.contactbook.service;
 
+import com.monetize360.contactbook.dao.ContactDAO;
+import com.monetize360.contactbook.dao.ContactDAOImpl;
 import com.monetize360.contactbook.domain.Contact;
 import com.monetize360.contactbook.dto.ContactDTO;
 
+import java.io.IOException;
 import java.io.OutputStream;
 import java.sql.*;
 import java.io.InputStream;
@@ -15,132 +18,43 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.modelmapper.ModelMapper;
 import static com.monetize360.contactbook.service.DatabaseReaderUtil.getConnection;
 
-public class ContactServiceImpl implements ContactService {
-    private ModelMapper modelMapper = new ModelMapper();
+    public class ContactServiceImpl implements ContactService {
+        private ModelMapper modelMapper = new ModelMapper();
+        private ContactDAO contactDAO = new ContactDAOImpl();
 
-    public java.sql.Date parseDate(String text) {
-        if (text != null && !text.isEmpty()) {
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-            try {
-                java.util.Date parsedDate = dateFormat.parse(text);
-                return new java.sql.Date(parsedDate.getTime());
-            } catch (ParseException e) {
-                e.printStackTrace();
-                return null;
+        @Override
+        public ContactDTO createContact(ContactDTO contactDTO) throws SQLException {
+            Contact contact = modelMapper.map(contactDTO, Contact.class);
+            contact = contactDAO.createContact(contact);
+            return modelMapper.map(contact, ContactDTO.class);
+        }
+
+        @Override
+        public boolean updateContact(ContactDTO contactDTO) throws SQLException {
+            Contact contact = modelMapper.map(contactDTO, Contact.class);
+            return contactDAO.updateContact(contact);
+        }
+
+        @Override
+        public boolean deleteContact(int contactId) throws SQLException {
+            return contactDAO.deleteContact(contactId);
+        }
+
+        @Override
+        public ContactDTO getContactById(int contactId) throws SQLException {
+            Contact contact = contactDAO.getContactById(contactId);
+            return contact != null ? modelMapper.map(contact, ContactDTO.class) : null;
+        }
+
+        @Override
+        public List<ContactDTO> searchContacts(String keyword) throws SQLException {
+            List<Contact> contacts = contactDAO.searchContacts(keyword);
+            List<ContactDTO> contactDTOs = new ArrayList<>();
+            for (Contact contact : contacts) {
+                contactDTOs.add(modelMapper.map(contact, ContactDTO.class));
             }
-        } else {
-            return null;
+            return contactDTOs;
         }
-    }
-
-
-    @Override
-    public ContactDTO createContact(ContactDTO contactDTO) throws SQLException {
-        Contact contact = modelMapper.map(contactDTO, Contact.class);
-        String query = "INSERT INTO contacts (name, email, dob, phone) VALUES (?, ?, ?, ?)";
-        try (Connection conn=getConnection();
-             PreparedStatement stmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
-            stmt.setString(1, contact.getName());
-            stmt.setString(2, contact.getEmail());
-            stmt.setDate(3, parseDate(contact.getDob()));
-            stmt.setString(4, contact.getPhone());
-            stmt.executeUpdate();
-            try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
-                if (generatedKeys.next()) {
-                    contact.setId(generatedKeys.getInt(1));
-                    contactDTO.setId(generatedKeys.getInt(1));
-                }
-            }
-        }
-        return contactDTO;
-    }
-
-    @Override
-    public boolean updateContact(ContactDTO contactDTO) {
-        String query = "UPDATE contacts SET name = ?, email = ?, dob = ?, phone = ? WHERE id = ?";
-        try (Connection conn = getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(query)) {
-
-            pstmt.setString(1, contactDTO.getName());
-            pstmt.setString(2, contactDTO.getEmail());
-            pstmt.setDate(3, parseDate(contactDTO.getDob()));
-            pstmt.setString(4, contactDTO.getPhone());
-            pstmt.setInt(5, contactDTO.getId());
-
-            return pstmt.executeUpdate() > 0;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
-    @Override
-    public boolean deleteContact(int contactId) {
-        String query = "DELETE FROM contacts WHERE id = ?";
-        try (Connection conn = getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(query)) {
-
-            pstmt.setInt(1, contactId);
-
-            return pstmt.executeUpdate() > 0;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
-    @Override
-    public ContactDTO getContactById(int contactId) {
-        String query = "SELECT * FROM contacts WHERE id = ?";
-        try (Connection conn = getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(query)) {
-
-            pstmt.setInt(1, contactId);
-            ResultSet rs = pstmt.executeQuery();
-
-            if (rs.next()) {
-                Contact contact = new Contact();
-                contact.setId(rs.getInt("id"));
-                contact.setName(rs.getString("name"));
-                contact.setEmail(rs.getString("email"));
-                contact.setDob(rs.getDate("dob").toString());
-                contact.setPhone(rs.getString("phone"));
-                return modelMapper.map(contact, ContactDTO.class);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    @Override
-    public List<ContactDTO> searchContacts(String keyword) {
-        List<ContactDTO> result = new ArrayList<>();
-        String query = "SELECT * FROM contacts WHERE name LIKE ? OR email LIKE ? OR phone LIKE ?";
-        try (Connection conn = getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(query)) {
-
-            String searchKeyword = "%" + keyword + "%";
-            pstmt.setString(1, searchKeyword);
-            pstmt.setString(2, searchKeyword);
-            pstmt.setString(3, searchKeyword);
-            ResultSet rs = pstmt.executeQuery();
-
-            while (rs.next()) {
-                Contact contact = new Contact();
-                contact.setId(rs.getInt("id"));
-                contact.setName(rs.getString("name"));
-                contact.setEmail(rs.getString("email"));
-                contact.setDob(rs.getDate("dob").toString());
-                contact.setPhone(rs.getString("phone"));
-
-                result.add(modelMapper.map(contact, ContactDTO.class));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return result;
-    }
 
     @Override
     public boolean importContactsFromExcel(InputStream inputStream) {
@@ -186,17 +100,19 @@ public class ContactServiceImpl implements ContactService {
 
 
     @Override
-    public boolean exportContactsToExcel(OutputStream outputStream) throws SQLException {
-        List<ContactDTO> contacts = getAllContacts();
-        System.out.println("Number of contacts retrieved: " + contacts.size());
+    public boolean exportContactsToExcel(OutputStream outputStream) {
         try (Workbook workbook = new XSSFWorkbook()) {
             Sheet sheet = workbook.createSheet("Contacts");
-            Row header = sheet.createRow(0);
-            header.createCell(0).setCellValue("Name");
-            header.createCell(1).setCellValue("Email");
-            header.createCell(2).setCellValue("DOB");
-            header.createCell(3).setCellValue("Phone");
 
+            // Create header row
+            Row headerRow = sheet.createRow(0);
+            String[] headers = {"Name", "Email", "Date of Birth", "Phone"};
+            for (int i = 0; i < headers.length; i++) {
+                headerRow.createCell(i).setCellValue(headers[i]);
+            }
+
+            // Write contact data
+            List<ContactDTO> contacts = getAllContacts();
             int rowNum = 1;
             for (ContactDTO contact : contacts) {
                 Row row = sheet.createRow(rowNum++);
@@ -205,31 +121,42 @@ public class ContactServiceImpl implements ContactService {
                 row.createCell(2).setCellValue(contact.getDob());
                 row.createCell(3).setCellValue(contact.getPhone());
             }
+
             workbook.write(outputStream);
-        } catch (Exception e) {
+            return true;
+        } catch (IOException | SQLException e) {
+            System.err.println("Failed to export contacts to Excel: " + e.getMessage());
             e.printStackTrace();
             return false;
         }
-        return true;
     }
 
-    private List<ContactDTO> getAllContacts() throws SQLException {
-        String query = "SELECT * FROM contacts";
-        List<ContactDTO> contacts = new ArrayList<>();
-        try (Connection conn = getConnection();
-             PreparedStatement stmt = conn.prepareStatement(query);
-             ResultSet rs = stmt.executeQuery()) {
-            while (rs.next()) {
-                Contact contact = modelMapper.map(rs, Contact.class);
-                contact.setName(rs.getString("name"));
-                contact.setEmail(rs.getString("email"));
-                contact.setDob(rs.getDate("dob").toString());
-                contact.setPhone(rs.getString("phone"));
 
-                contacts.add(modelMapper.map(contact, ContactDTO.class));
+        private List<ContactDTO> getAllContacts() throws SQLException {
+            String query = "SELECT * FROM contacts";
+            List<ContactDTO> contacts = new ArrayList<>();
+            try (Connection conn = getConnection();
+                 PreparedStatement stmt = conn.prepareStatement(query);
+                 ResultSet rs = stmt.executeQuery()) {
+
+                while (rs.next()) {
+                    Contact contact = new Contact();
+                    contact.setName(rs.getString("name"));
+                    contact.setEmail(rs.getString("email"));
+                    contact.setDob(rs.getString("dob"));
+                    contact.setPhone(rs.getString("phone"));
+
+                    ContactDTO contactDTO = modelMapper.map(contact, ContactDTO.class);
+                    contacts.add(contactDTO);
+
+                    System.out.println("Retrieved ContactDTO: " + contactDTO);
+                }
+            } catch (SQLException e) {
+                System.err.println("SQL Error: " + e.getMessage());
+                e.printStackTrace();
             }
+            return contacts;
         }
-        return contacts;
+
     }
-}
 

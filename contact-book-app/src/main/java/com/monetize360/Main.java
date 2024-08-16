@@ -142,8 +142,12 @@ public class Main {
                     }
                     break;
 
-                case 6: // Import Contacts from Excel
-                    try (InputStream inputStream = new FileInputStream("C:\\Users\\chira\\IdeaProjects\\Training\\mtz-java-training\\contact-book-app\\src\\main\\resources\\contact.xlsx")) {
+                case 6:
+                    try (InputStream inputStream = Main.class.getClassLoader().getResourceAsStream("contact.xlsx")) {
+                        if (inputStream == null) {
+                            System.out.println("File not found.");
+                            return;
+                        }
                         boolean imported = contactService.importContactsFromExcel(inputStream);
                         if (imported) {
                             System.out.println("Contacts imported successfully.");
@@ -153,20 +157,20 @@ public class Main {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                    break;
 
+break;
                 case 7:
-                   try (OutputStream outputStream = new FileOutputStream("C:\\Users\\chira\\IdeaProjects\\Training\\mtz-java-training\\contact-book-app\\src\\main\\resources\\example.xlsx")) {
-                       boolean exported = contactService.exportContactsToExcel(outputStream);
-                   if (exported) {
-                    System.out.println("Contacts exported successfully.");
-                   } else {
-                    System.out.println("Failed to export contacts.");
-                   }
-                  } catch (Exception e) {
-                   e.printStackTrace();
-                  }
-                   break;
+                    try (OutputStream outputStream = new FileOutputStream("C:\\Users\\chira\\IdeaProjects\\Training\\mtz-java-training\\contact-book-app\\src\\main\\resources\\example.xlsx")) {
+                        boolean exported = contactService.exportContactsToExcel(outputStream);
+                        if (exported) {
+                            System.out.println("Contacts exported successfully.");
+                        } else {
+                            System.out.println("Failed to export contacts.");
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    break;
                 case 8:
                     flag = false;
                     System.out.println("Exiting...");
