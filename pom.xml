@@ -18,6 +18,9 @@
         <module>contact-book-app</module>
         <module>pdf-generation</module>
         <module>invoice-generation</module>
+        <module>learning-spring-core</module>
+        <module>cbook-server-app</module>
+        <module>contact-book-app-jpa</module>
     </modules>
 
     <properties>

@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="Encoding">
+    <file url="file://$PROJECT_DIR$/cbook-server-app/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/contact-book-app-jpa/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/contact-book-app/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/contact-book-app/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/employee-details/src/main/java" charset="UTF-8" />
@@ -13,6 +15,8 @@
     <file url="file://$PROJECT_DIR$/ipl-stats/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/jdbc/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/jdbc/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/learning-spring-core/learning-spring-core/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/learning-spring-core/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/mtz-quiz/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/mtz-quiz/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/pdf-generation/src/main/java" charset="UTF-8" />
