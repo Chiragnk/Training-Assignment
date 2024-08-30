@@ -21,6 +21,9 @@
         <module>learning-spring-core</module>
         <module>cbook-server-app</module>
         <module>contact-book-app-jpa</module>
+        <module>spring-data-jpa-tutorial</module>
+        <module>spring-data-jpa-practice</module>
+        <module>contact-book-application</module>
     </modules>
 
     <properties>

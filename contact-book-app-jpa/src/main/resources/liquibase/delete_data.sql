@@ -1,0 +1,2 @@
+DELETE FROM contact_jpa
+WHERE id = '3e3a1405-37d4-4c96-a621-a258c97b93d2';

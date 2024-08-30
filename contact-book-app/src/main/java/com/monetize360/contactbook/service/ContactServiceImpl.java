@@ -104,14 +104,12 @@ import static com.monetize360.contactbook.service.DatabaseReaderUtil.getConnecti
         try (Workbook workbook = new XSSFWorkbook()) {
             Sheet sheet = workbook.createSheet("Contacts");
 
-            // Create header row
             Row headerRow = sheet.createRow(0);
             String[] headers = {"Name", "Email", "Date of Birth", "Phone"};
             for (int i = 0; i < headers.length; i++) {
                 headerRow.createCell(i).setCellValue(headers[i]);
             }
 
-            // Write contact data
             List<ContactDTO> contacts = getAllContacts();
             int rowNum = 1;
             for (ContactDTO contact : contacts) {

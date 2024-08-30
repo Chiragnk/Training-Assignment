@@ -1,13 +1,10 @@
 package com.monetize360.cbook.web;
-
-import com.monetize360.cbook.domain.Contact;
 import com.monetize360.cbook.dto.ContactDTO;
 import com.monetize360.cbook.service.ContactService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 import java.util.UUID;
 

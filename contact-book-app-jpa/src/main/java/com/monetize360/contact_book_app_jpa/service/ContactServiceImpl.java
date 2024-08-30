@@ -1,5 +1,11 @@
 package com.monetize360.contact_book_app_jpa.service;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.WriterException;
+import com.google.zxing.client.j2se.MatrixToImageWriter;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.QRCodeWriter;
 import com.monetize360.contact_book_app_jpa.dao.ContactRepository;
 import com.monetize360.contact_book_app_jpa.domain.Contact;
 import com.monetize360.contact_book_app_jpa.dto.ContactDTO;
@@ -8,7 +14,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import java.util.ArrayList;
+
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -63,23 +71,25 @@ public class ContactServiceImpl implements ContactService {
     public List<ContactDTO> getAllContacts(int page, int size, String sortBy, String sortDir) {
         PageRequest pageRequest = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.fromString(sortDir), sortBy));
         Page<Contact> contactPage = contactRepository.findAll(pageRequest);
-        List<ContactDTO> contactDTOs = new ArrayList<>();
-        for (Contact contact : contactPage.getContent()) {
-            ContactDTO contactDTO = objectMapper.convertValue(contact, ContactDTO.class);
-            contactDTOs.add(contactDTO);
-        }
-        return contactDTOs;
+        return objectMapper.convertValue(contactPage.getContent(), new TypeReference<List<ContactDTO>>() {});
     }
 
     @Override
     public List<ContactDTO> searchContacts(int page, int size, String sortBy, String sortDir, String search) {
         PageRequest pageRequest = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.fromString(sortDir), sortBy));
         Page<Contact> contactPage = contactRepository.findByFirstNameContainingOrLastNameContainingOrEmailContainingOrPhoneContaining(search, search, search, search, pageRequest);
-        List<ContactDTO> contactDTOs = new ArrayList<>();
-        for (Contact contact : contactPage.getContent()) {
-            ContactDTO contactDTO = objectMapper.convertValue(contact, ContactDTO.class);
-            contactDTOs.add(contactDTO);
+        return objectMapper.convertValue(contactPage.getContent(), new TypeReference<List<ContactDTO>>() {});
+    }
+    @Override
+    public BufferedImage generateQRCodeById(UUID id) throws IOException, WriterException {
+        Optional<ContactDTO> contactDTO = getContactById(id);
+        if (contactDTO.isPresent()) {
+            String contactJson = objectMapper.writeValueAsString(contactDTO.get());
+            QRCodeWriter barcodeWriter = new QRCodeWriter();
+            BitMatrix bitMatrix = barcodeWriter.encode(contactJson, BarcodeFormat.QR_CODE, 200, 200);
+            return MatrixToImageWriter.toBufferedImage(bitMatrix);
+        } else {
+            return null;
         }
-        return contactDTOs;
     }
 }

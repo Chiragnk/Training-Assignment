@@ -8,16 +8,19 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="invoice-generation" />
-        <module name="learning-spring-core" />
         <module name="student-data" />
+        <module name="contact-book-app-jpa" />
+        <module name="contact-book-application" />
+        <module name="employee-details" />
+        <module name="ipl-jdbc" />
+        <module name="learning-spring-core" />
+        <module name="spring-data-jpa-tutorial" />
         <module name="cbook-server-app" />
         <module name="pdf-generation" />
-        <module name="contact-book-app-jpa" />
+        <module name="jpa" />
         <module name="contact-book-app" />
         <module name="ipl-stats" />
-        <module name="employee-details" />
         <module name="mtz-quiz" />
-        <module name="ipl-jdbc" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
@@ -29,8 +32,11 @@
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="cbook-server-app" options="-parameters" />
       <module name="contact-book-app-jpa" options="-parameters" />
+      <module name="contact-book-application" options="-parameters" />
+      <module name="jpa" options="-parameters" />
       <module name="learning-spring-core" options="-parameters" />
       <module name="learning-spring-core (1)" options="-parameters" />
+      <module name="spring-data-jpa-tutorial" options="-parameters" />
     </option>
   </component>
 </project>
