@@ -7,7 +7,9 @@ import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 import com.monetize360.contact_book_application.dao.ContactRepository;
+import com.monetize360.contact_book_application.dao.UserRepository;
 import com.monetize360.contact_book_application.domain.Contact;
+import com.monetize360.contact_book_application.domain.User;
 import com.monetize360.contact_book_application.dto.ContactDTO;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVWriter;
@@ -42,6 +44,8 @@ public class ContactServiceImpl implements ContactService {
     private ObjectMapper objectMapper;
     @Autowired
     private JavaMailSender mailSender;
+    @Autowired
+    UserRepository userRepository;
 
     @Override
     public ContactDTO insertContact(ContactDTO contactDTO) {
@@ -84,15 +88,18 @@ public class ContactServiceImpl implements ContactService {
     public List<ContactDTO> getAllContacts(int page, int size, String sortBy, String sortDir) {
         PageRequest pageRequest = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.fromString(sortDir), sortBy));
         Page<Contact> contactPage = contactRepository.findAll(pageRequest);
-        return objectMapper.convertValue(contactPage.getContent(), new TypeReference<List<ContactDTO>>() {});
+        return objectMapper.convertValue(contactPage.getContent(), new TypeReference<List<ContactDTO>>() {
+        });
     }
 
     @Override
     public List<ContactDTO> searchContacts(int page, int size, String sortBy, String sortDir, String search) {
         PageRequest pageRequest = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.fromString(sortDir), sortBy));
         Page<Contact> contactPage = contactRepository.findByFirstNameContainingOrLastNameContainingOrEmailContainingOrPhoneContaining(search, search, search, search, pageRequest);
-        return objectMapper.convertValue(contactPage.getContent(), new TypeReference<List<ContactDTO>>() {});
+        return objectMapper.convertValue(contactPage.getContent(), new TypeReference<List<ContactDTO>>() {
+        });
     }
+
     @Override
     public BufferedImage generateQRCodeById(UUID id) throws IOException, WriterException {
         Optional<ContactDTO> contactDTO = getContactById(id);
@@ -105,25 +112,35 @@ public class ContactServiceImpl implements ContactService {
             return null;
         }
     }
+
     @Override
-    public void importContacts(MultipartFile file) {
+    public void importContacts(UUID userId, MultipartFile file) {
         try (Workbook workbook = new XSSFWorkbook(file.getInputStream())) {
             Sheet sheet = workbook.getSheetAt(0);
             List<Contact> contacts = new ArrayList<>();
+            User user = userRepository.findById(userId).orElse(null);
+            if (user == null) {
+                throw new RuntimeException("User with ID " + userId + " not found");
+            }
             for (Row row : sheet) {
-                if (row.getRowNum() == 0) continue;
+                if (row.getRowNum() == 0) continue; // Skip header row
+
                 Contact contact = new Contact();
                 contact.setFirstName(getCellValue((XSSFCell) row.getCell(0)));
                 contact.setLastName(getCellValue((XSSFCell) row.getCell(1)));
                 contact.setEmail(getCellValue((XSSFCell) row.getCell(2)));
                 contact.setPhone(getCellValue((XSSFCell) row.getCell(3)));
+                contact.setUser(user); // Set the user provided in the request
+
                 contacts.add(contact);
             }
             contactRepository.saveAll(contacts);
         } catch (IOException e) {
-            throw new RuntimeException("Failed to import contacts");
+            throw new RuntimeException("Failed to import contacts: " + e.getMessage());
         }
     }
+
+
 
     @Override
     public byte[] exportContacts() {

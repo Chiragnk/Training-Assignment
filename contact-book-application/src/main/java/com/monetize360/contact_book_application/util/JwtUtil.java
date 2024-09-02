@@ -13,14 +13,15 @@ import java.util.Date;
 @Component
     public class JwtUtil {
 
-        @Value("${jwt.secret}")
-        private String secretKey;
+//        @Value("${jwt.secret}")
+//        private String secretKey;
+//
+//        @Value("${jwt.expiration}")
+//        private long expiration;
+private final String secretKey = "yourSecretKeyHere"; // Replace with your actual secret key
+    private final long expiration = 1000 * 60 * 60 * 10;
 
-        @Value("${jwt.expiration}")
-        private long expiration;
-
-        // Generate a token
-        public String generateToken(String username) {
+    public String generateToken(String username) {
             return Jwts.builder()
                     .setSubject(username)
                     .setIssuedAt(new Date())
@@ -29,23 +30,19 @@ import java.util.Date;
                     .compact();
         }
 
-        // Validate a token
         public boolean validateToken(String token, String username) {
             final String tokenUsername = getUsernameFromToken(token);
             return (tokenUsername.equals(username) && !isTokenExpired(token));
         }
 
-        // Extract username from token
         public String getUsernameFromToken(String token) {
             return getClaimsFromToken(token).getSubject();
         }
 
-        // Check if the token is expired
         private boolean isTokenExpired(String token) {
             return getClaimsFromToken(token).getExpiration().before(new Date());
         }
 
-        // Get claims from token
         private Claims getClaimsFromToken(String token) {
             return Jwts.parser()
                     .setSigningKey(secretKey)

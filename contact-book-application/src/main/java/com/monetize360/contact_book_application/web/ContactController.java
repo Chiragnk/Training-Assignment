@@ -2,6 +2,9 @@ package com.monetize360.contact_book_application.web;
 
 import com.monetize360.contact_book_application.dto.ContactDTO;
 import com.monetize360.contact_book_application.service.ContactService;
+import com.monetize360.contact_book_application.util.JwtUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -17,9 +20,12 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/contacts")
 public class ContactController {
+    private static final Logger logger = LoggerFactory.getLogger(ContactController.class);
 
     @Autowired
     private ContactService contactService;
+    @Autowired
+    private JwtUtil jwtUtil;
     @PostMapping("/add")
     public ResponseEntity<ContactDTO> addContact(@RequestBody ContactDTO contactDTO) {
         ContactDTO newContact = contactService.insertContact(contactDTO);
@@ -47,12 +53,33 @@ public class ContactController {
 
     @GetMapping("/all")
     public ResponseEntity<List<ContactDTO>> getAllContacts(
+            @RequestHeader("Authorization") String authHeader,
             @RequestParam(value = "page", defaultValue = "1") int page,
             @RequestParam(value = "size", defaultValue = "10") int size,
             @RequestParam(value = "sortBy", defaultValue = "firstName") String sortBy,
             @RequestParam(value = "sortDir", defaultValue = "ASC") String sortDir) {
-        List<ContactDTO> contacts = contactService.getAllContacts(page, size, sortBy, sortDir);
-        return ResponseEntity.ok(contacts);
+
+        logger.info("Received request for /all endpoint with Authorization header: {}", authHeader);
+
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            String token = authHeader.substring(7);
+            logger.info("Extracted token: {}", token);
+
+            String username = jwtUtil.getUsernameFromToken(token);
+            logger.info("Extracted username from token: {}", username);
+
+            if (jwtUtil.validateToken(token, username)) {
+                logger.info("Token is valid. Fetching contacts...");
+                List<ContactDTO> contacts = contactService.getAllContacts(page, size, sortBy, sortDir);
+                return ResponseEntity.ok(contacts);
+            } else {
+                logger.warn("Invalid token: {}", token);
+            }
+        } else {
+            logger.warn("Authorization header is missing or does not start with 'Bearer '");
+        }
+
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 
     @GetMapping("/search")
@@ -79,18 +106,27 @@ public class ContactController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    @PostMapping("/import")
-    public ResponseEntity<String> importContacts(@RequestParam("file") MultipartFile file) {
-        if (file.isEmpty()) {
-            return new ResponseEntity<>("No file uploaded", HttpStatus.BAD_REQUEST);
-        }
-        try {
-            contactService.importContacts(file);
-            return new ResponseEntity<>("Contacts imported successfully", HttpStatus.OK);
-        } catch (RuntimeException e) {
-            return new ResponseEntity<>("Failed to import contacts", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+//    @PostMapping("/import")
+//    public ResponseEntity<String> importContacts(@RequestParam("file") MultipartFile file) {
+//        if (file.isEmpty()) {
+//            return new ResponseEntity<>("No file uploaded", HttpStatus.BAD_REQUEST);
+//        }
+//        try {
+//            contactService.importContacts(file);
+//            return new ResponseEntity<>("Contacts imported successfully", HttpStatus.OK);
+//        } catch (RuntimeException e) {
+//            return new ResponseEntity<>("Failed to import contacts", HttpStatus.INTERNAL_SERVER_ERROR);
+//        }
+//    }
+@PostMapping("/import/{id}")
+public String importContacts(@RequestParam("file") MultipartFile file, @PathVariable("id") UUID userId) {
+    try {
+        contactService.importContacts(userId, file);
+        return "Contacts imported successfully for user ID: " + userId;
+    } catch (Exception e) {
+        return "Failed to import contacts: " + e.getMessage();
     }
+}
     @GetMapping("/export")
     public ResponseEntity<byte[]> exportContacts() {
         try {

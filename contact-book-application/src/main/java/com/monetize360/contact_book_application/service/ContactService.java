@@ -22,7 +22,10 @@ public interface ContactService  {
     List<ContactDTO> getAllContacts(int page, int size, String sortBy, String sortDir);
     List<ContactDTO> searchContacts(int page, int size, String sortBy, String sortDir, String search);
     BufferedImage generateQRCodeById(UUID id) throws IOException, WriterException;
-    void importContacts(MultipartFile file);
+    //void importContacts(MultipartFile file);
+
+    void importContacts(UUID userId, MultipartFile file);
+
     byte[] exportContacts();
     void importContactsFromCSV(MultipartFile file);
     byte[] exportContactsToCSV();
