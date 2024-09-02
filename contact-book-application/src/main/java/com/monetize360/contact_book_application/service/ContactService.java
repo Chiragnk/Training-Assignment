@@ -24,9 +24,7 @@ public interface ContactService  {
     BufferedImage generateQRCodeById(UUID id) throws IOException, WriterException;
     void importContacts(MultipartFile file);
     byte[] exportContacts();
-    void shareContactByEmail(UUID id, String recipientEmail) throws IOException, WriterException, MessagingException;
-
     void importContactsFromCSV(MultipartFile file);
-
     byte[] exportContactsToCSV();
+    void shareContactByEmail(UUID id, String recipientEmail) throws IOException, WriterException, MessagingException;
 }

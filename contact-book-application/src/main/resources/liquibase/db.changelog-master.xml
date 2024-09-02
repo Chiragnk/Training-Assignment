@@ -9,5 +9,10 @@
     <changeSet id="1" author="Chirag">
         <sqlFile path="liquibase/create_table.sql"/>
     </changeSet>
-
+    <changeSet id="2" author="Chirag">
+        <sqlFile path="liquibase/insert_users.sql"/>
+    </changeSet>
+    <changeSet id="3" author="Chirag">
+        <sqlFile path="liquibase/insert_data.sql"/>
+    </changeSet>
 </databaseChangeLog>
